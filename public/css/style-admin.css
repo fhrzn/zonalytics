@@ -1,0 +1,31 @@
+#map {
+    height: 60vh;
+    width: 100%;    
+}
+.btn-reset {
+    position: relative;
+}
+#alert-success {
+    position: fixed;
+    right: 15px;
+    bottom: 65px;
+    display: none;
+}
+#alert-retrain {
+    position: fixed;
+    right: 15px;
+    bottom: 0;
+    display: none;
+}
+.alert-text {
+    display: inline-block;
+    vertical-align: middle;
+}
+#preloader-retrain {
+    margin-left: 50px;
+    display: inline-block;
+    vertical-align: middle;
+}
+#alert-retrain-model {
+    display: none;
+}
