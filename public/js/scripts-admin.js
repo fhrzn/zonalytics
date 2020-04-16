@@ -252,11 +252,11 @@ let predictedData;
  * Request API
  */
 const allData = () => {        
-    $.get('http://localhost:5000/api/province', (data, status) => {
+    $.get('https://zonalytics-flask.herokuapp.com/api/province', (data, status) => {
         provinsi = data.data
         console.log(provinsi)
     })
-    $.get('http://localhost:5000/api/sentiment', (data, status) => {
+    $.get('https://zonalytics-flask.herokuapp.com/api/sentiment', (data, status) => {
         sentiment = data.data
         totalData = data.total
         console.log('init');
@@ -268,14 +268,14 @@ const allData = () => {
 }
 
 const dataByProv = (prov) => {
-    $.get(`http://localhost:5000/api/sentiment/${prov}`, (data, status) => {
+    $.get(`https://zonalytics-flask.herokuapp.com/api/sentiment/${prov}`, (data, status) => {
         sentiment = data.data        
         settingChart(data)
     })
 }
 
 const dataAll = () => {
-    $.get('http://localhost:5000/api/sentiment', (data, status) => {
+    $.get('https://zonalytics-flask.herokuapp.com/api/sentiment', (data, status) => {
         sentiment = data.data
         dataSentiment = {
           1: sentiment[0],
@@ -309,7 +309,7 @@ const settingMapbox = () => {
 const addMap = (prov) => {
     map.addSource(prov, {
         'type':'geojson',
-        'data': `http://localhost:5000/js/geo/${prov}.geojson`
+        'data': `http://localhost:8000/js/geo/${prov.toLowerCase()}.geojson`
     })        
 
     map.addLayer({
@@ -549,7 +549,7 @@ const requestIntervally = () => {
     let timeout = 1000 * 60 * 60
     setTimeout(run = () => {              
         console.log('executed');                
-        // $.get('http://localhost:5000/api/fetch-data', (data, status) => {
+        // $.get('https://zonalytics-flask.herokuapp.com/api/fetch-data', (data, status) => {
         //     console.log('status ', status);
         //     if (status == 'success') {
         //         console.log('fetching done. refresh now');
@@ -579,7 +579,7 @@ function logout() {
 
 const getDataTraining = () => {
     const table = $('.table').DataTable()    
-    $.get('http://localhost:5000/api/training-data', (data, status) => {
+    $.get('https://zonalytics-flask.herokuapp.com/api/training-data', (data, status) => {
         dataset = data.data                
         dataset.forEach((item) => {                
             table.row.add([
@@ -606,7 +606,7 @@ const getDataTraining = () => {
 
 const getHasilKlasifikasi = () => {
     const table = $('.table').DataTable()
-    $.get('http://localhost:5000/api/predicted-data', (data, status) => {
+    $.get('https://zonalytics-flask.herokuapp.com/api/predicted-data', (data, status) => {
         dataset = data.data
         console.log(data);
         
@@ -663,7 +663,7 @@ const tambahData = () => {
 
   	$.ajax({
         'method': 'POST',
-        'url': 'http://localhost:5000/api/add-training-data',
+        'url': 'https://zonalytics-flask.herokuapp.com/api/add-training-data',
         'dataType': 'json',
         'contentType': 'application/json',
         'data': JSON.stringify(predictedData),
@@ -681,7 +681,7 @@ const retrainModel = () => {
 
     $.ajax({
         'method': 'GET',
-        'url': 'http://localhost:5000/api/retrain-model',
+        'url': 'https://zonalytics-flask.herokuapp.com/api/retrain-model',
         'success': (data, status) => {
             console.log(`accuracy: ${data}`);
             // show flash message here

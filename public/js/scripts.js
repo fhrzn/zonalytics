@@ -249,7 +249,7 @@ let pieChart, barChart, lineChart;
  * Request API
  */
 const allData = () => {        
-    $.get('http://localhost:5000/api/province', (data, status) => {
+    $.get('https://zonalytics-flask.herokuapp.com/api/province', (data, status) => {
         provinsi = data.data
         console.log(provinsi)
         let d = new Date()
@@ -279,7 +279,7 @@ const allData = () => {
             }
         }
     })
-    $.get('http://localhost:5000/api/sentiment', (data, status) => {
+    $.get('https://zonalytics-flask.herokuapp.com/api/sentiment', (data, status) => {
         console.log(data);      
         sentiment = data.data
         totalData = data.total        
@@ -293,14 +293,14 @@ const allData = () => {
 }
 
 const dataByProv = (prov) => {
-    $.get(`http://localhost:5000/api/sentiment/${prov}`, (data, status) => {
+    $.get(`https://zonalytics-flask.herokuapp.com/api/sentiment/${prov}`, (data, status) => {
         sentiment = data.data        
         settingChart(data)
     })
 }
 
 const dataAll = () => {
-    $.get('http://localhost:5000/api/sentiment', (data, status) => {
+    $.get('https://zonalytics-flask.herokuapp.com/api/sentiment', (data, status) => {
         sentiment = data.data
         // dataSentiment = {
         //   1: sentiment[0],
@@ -333,8 +333,8 @@ const settingMapbox = () => {
 
 const addMap = (prov) => {
     map.addSource(prov, {
-        'type':'geojson',
-        'data': `http://localhost:5000/js/geo/${prov}.geojson`
+        'type':'geojson',        
+        'data': `http://localhost:8000/js/geo/${prov.toLowerCase()}.geojson`
     })        
 
     map.addLayer({
@@ -647,7 +647,7 @@ const crawlData = (keyword=null, startDate=null, endDate=null) => {
     if (keyword!=null && startDate!=null && endDate!=null) {
         $.ajax({
             'method': 'POST',
-            'url': 'http://localhost:5000/api/fetch-data',
+            'url': 'https://zonalytics-flask.herokuapp.com/api/fetch-data',
             'dataType': 'json',
             'contentType': 'application/json',
             'data': JSON.stringify({
@@ -686,7 +686,7 @@ const crawlData = (keyword=null, startDate=null, endDate=null) => {
             }
         })
     } else {
-        $.get('http://localhost:5000/api/fetch-data', (data, status) => {
+        $.get('https://zonalytics-flask.herokuapp.com/api/fetch-data', (data, status) => {
             console.log('status ', status);
             if (status == 'success') {                        
                 if (data.status == 'no new data') {
