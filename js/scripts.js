@@ -245,11 +245,13 @@ let koordinat = [
   ]
 const popup = new mapboxgl.Popup();
 let pieChart, barChart, lineChart;
+
+const endpoint = "https://zonalytics-backend.trydev.my.id"
 /** 
  * Request API
  */
 const allData = () => {        
-    $.get('http://localhost:5000/api/province', (data, status) => {
+    $.get(`${endpoint}/api/province`, (data, status) => {
         provinsi = data.data
         console.log(provinsi)
         let d = new Date()
@@ -282,7 +284,7 @@ const allData = () => {
         alert('Sistem tidak merespon. Harap coba lagi nanti.')
     })
 
-    $.get('http://localhost:5000/api/sentiment', (data, status) => {        
+    $.get(`${endpoint}/api/sentiment`, (data, status) => {        
         sentiment = data
         totalData = data.data.length        
         console.log('init');
@@ -297,7 +299,7 @@ const allData = () => {
 }
 
 const dataByProv = (prov) => {
-    $.get(`http://localhost:5000/api/sentiment/${prov}`, (data, status) => {
+    $.get(`${endpoint}/api/sentiment/${prov}`, (data, status) => {
         sentiment = data
         
         console.log('total data', data.data.length);
@@ -310,7 +312,7 @@ const dataByProv = (prov) => {
 }
 
 const dataAll = () => {
-    $.get('http://localhost:5000/api/sentiment', (data, status) => {
+    $.get(`${endpoint}/api/sentiment`, (data, status) => {
         sentiment = data
         // dataSentiment = {
         //   1: sentiment[0],
@@ -346,7 +348,7 @@ const settingMapbox = () => {
 const addMap = (prov) => {
     map.addSource(prov, {
         'type':'geojson',        
-        'data': `http://localhost:5000/js/geo/${prov.toLowerCase()}.geojson`
+        'data': `${endpoint}/js/geo/${prov.toLowerCase()}.geojson`
     })        
 
     map.addLayer({
@@ -660,7 +662,7 @@ const crawlData = (keyword=null, startDate=null, endDate=null) => {
     if (keyword!=null && startDate!=null && endDate!=null) {
         $.ajax({
             'method': 'POST',
-            'url': 'http://localhost:5000/api/fetch-data',
+            'url': `${endpoint}/api/fetch-data`,
             'dataType': 'json',
             'contentType': 'application/json',
             'data': JSON.stringify({
@@ -704,7 +706,7 @@ const crawlData = (keyword=null, startDate=null, endDate=null) => {
             }
         })
     } else {
-        $.get('http://localhost:5000/api/fetch-data', (data, status) => {
+        $.get(`${endpoint}/api/fetch-data`, (data, status) => {
             console.log('status ', status);
             if (status == 'success') {                        
                 if (data.status == 'no new data') {
