@@ -252,37 +252,47 @@ let predictedData;
  * Request API
  */
 const allData = () => {        
-    $.get('https://zonalytics-flask.herokuapp.com/api/province', (data, status) => {
+    $.get('http://localhost:5000/api/province', (data, status) => {
         provinsi = data.data
         console.log(provinsi)
+    }).fail((xhr, e) => {
+        alert('Sistem tidak merespon. Harap coba lagi nanti.')
     })
-    $.get('https://zonalytics-flask.herokuapp.com/api/sentiment', (data, status) => {
-        sentiment = data.data
-        totalData = data.total
+    $.get('http://localhost:5000/api/sentiment', (data, status) => {
+        sentiment = data
+        totalData = data.data.length
         console.log('init');
         console.log(sentiment);
         console.log(totalData);
         
-        initChart(data)
+        initChart(sentiment)
+    }).fail((xhr, e) => {
+        alert('Sistem tidak merespon. Harap coba lagi nanti.')
     })
 }
 
 const dataByProv = (prov) => {
-    $.get(`https://zonalytics-flask.herokuapp.com/api/sentiment/${prov}`, (data, status) => {
-        sentiment = data.data        
-        settingChart(data)
+    $.get(`http://localhost:5000/api/sentiment/${prov}`, (data, status) => {
+        sentiment = data      
+        
+        // $('#total-data').text(data.data.length)
+        settingChart(sentiment)
+    }).fail((xhr, e) => {
+        alert('Sistem tidak merespon. Harap coba lagi nanti.')
     })
 }
 
 const dataAll = () => {
-    $.get('https://zonalytics-flask.herokuapp.com/api/sentiment', (data, status) => {
-        sentiment = data.data
-        dataSentiment = {
-          1: sentiment[0],
-          2: sentiment[1],
-          3: sentiment[2]
-        }      
-        settingChart(data)
+    $.get('http://localhost:5000/api/sentiment', (data, status) => {
+        sentiment = data
+        // dataSentiment = {
+        //   1: sentiment[0],
+        //   2: sentiment[1],
+        //   3: sentiment[2]
+        // }      
+        settingChart(sentiment)
+    }).fail((xhr, e) => {
+        alert('Sistem tidak merespon. Harap coba lagi nanti.')
     })
 }
 
@@ -309,7 +319,7 @@ const settingMapbox = () => {
 const addMap = (prov) => {
     map.addSource(prov, {
         'type':'geojson',
-        'data': `http://localhost:8000/js/geo/${prov.toLowerCase()}.geojson`
+        'data': `http://localhost:5000/js/geo/${prov.toLowerCase()}.geojson`
     })        
 
     map.addLayer({
@@ -383,7 +393,7 @@ const initChart = (dataSentiment) => {
 
     var data = {
         datasets: [{
-            data: dataSentiment.data,
+            data: dataSentiment.data.data,
             backgroundColor: [
                 '#4CAF50',
                 '#FF5252',
@@ -433,7 +443,7 @@ const initChart = (dataSentiment) => {
           labels: ['Positif', 'Negatif', 'Netral'],
           datasets: [{
               label: 'Jumlah Data Sentimen',
-              data: dataSentiment.data,
+              data: dataSentiment.data.data,
               backgroundColor: [
                   // 'rgba(255, 99, 132, 0.2)',
                   // 'rgba(54, 162, 235, 0.2)',
@@ -532,16 +542,40 @@ const initChart = (dataSentiment) => {
 }
 
 const settingChart = (dataSentiment) => {    
-    console.log(dataSentiment);    
-    pieChart.data.datasets[0].data = [dataSentiment.data[1], dataSentiment.data[2], dataSentiment.data[3]]    
-    pieChart.update();
+    // console.log(dataSentiment);    
+    // pieChart.data.datasets[0].data = [dataSentiment.data[1], dataSentiment.data[2], dataSentiment.data[3]]    
+    // pieChart.update();
 
-    barChart.data.datasets[0].data = [dataSentiment.data[1], dataSentiment.data[2], dataSentiment.data[3]]    
-    barChart.update();
+    // barChart.data.datasets[0].data = [dataSentiment.data[1], dataSentiment.data[2], dataSentiment.data[3]]    
+    // barChart.update();
+
+    if (Array.isArray(dataSentiment.data.data)) {
+      // sentiment = {
+      //     data: {
+      //         1: dataSentiment.data[0],
+      //         2: dataSentiment.data[1],
+      //         3: dataSentiment.data[2]
+      //     }
+      // }
+      // pieChart.data.datasets[0].data = [sentiment.data[1], sentiment.data[2], sentiment.data[3]]    
+      pieChart.data.datasets[0].data = dataSentiment.data.data
+      pieChart.update();
+
+      // barChart.data.datasets[0].data = [sentiment.data[1], sentiment.data[2], sentiment.data[3]]    
+      barChart.data.datasets[0].data = dataSentiment.data.data
+      barChart.update();
+      } else {
+          pieChart.data.datasets[0].data = [dataSentiment.data.data[1], dataSentiment.data.data[2], dataSentiment.data.data[3]]    
+          pieChart.update();
+      
+          barChart.data.datasets[0].data = [dataSentiment.data.data[1], dataSentiment.data.data[2], dataSentiment.data.data[3]]    
+          barChart.update();
+      }
 
     lineChart.data.datasets[0].data = dataSentiment.series.negatif
     lineChart.data.datasets[1].data = dataSentiment.series.positif
     lineChart.data.datasets[2].data = dataSentiment.series.netral
+    lineChart.data.labels = dataSentiment.series.tahun
     lineChart.update()
 }
 
@@ -549,7 +583,7 @@ const requestIntervally = () => {
     let timeout = 1000 * 60 * 60
     setTimeout(run = () => {              
         console.log('executed');                
-        // $.get('https://zonalytics-flask.herokuapp.com/api/fetch-data', (data, status) => {
+        // $.get('http://localhost:5000/api/fetch-data', (data, status) => {
         //     console.log('status ', status);
         //     if (status == 'success') {
         //         console.log('fetching done. refresh now');
@@ -579,7 +613,7 @@ function logout() {
 
 const getDataTraining = () => {
     const table = $('.table').DataTable()    
-    $.get('https://zonalytics-flask.herokuapp.com/api/training-data', (data, status) => {
+    $.get('http://localhost:5000/api/training-data', (data, status) => {
         dataset = data.data                
         dataset.forEach((item) => {                
             table.row.add([
@@ -601,12 +635,15 @@ const getDataTraining = () => {
             // retrainModel()
             $('#alert-retrain-model').show()
         }
+    }).fail((xhr, e) => {
+        $('#preloader-data').hide()
+        alert('Terjadi kesalahan pada sistem. Harap coba lagi nanti.')
     })
 }
 
 const getHasilKlasifikasi = () => {
     const table = $('.table').DataTable()
-    $.get('https://zonalytics-flask.herokuapp.com/api/predicted-data', (data, status) => {
+    $.get('http://localhost:5000/api/predicted-data', (data, status) => {
         dataset = data.data
         console.log(data);
         
@@ -623,6 +660,9 @@ const getHasilKlasifikasi = () => {
             ]).draw(false)
         })
         $('#preloader-data').hide()
+    }).fail((xhr, e) => {
+        $('#preloader-data').hide()
+        alert('Terjadi kesalahan pada sistem. Harap coba lagi nanti.')
     })
 }
 
@@ -663,13 +703,16 @@ const tambahData = () => {
 
   	$.ajax({
         'method': 'POST',
-        'url': 'https://zonalytics-flask.herokuapp.com/api/add-training-data',
+        'url': 'http://localhost:5000/api/add-training-data',
         'dataType': 'json',
         'contentType': 'application/json',
         'data': JSON.stringify(predictedData),
         'success': (data, status) => {
             console.log(data);
             location.reload()            
+        },
+        'error': (xhr, status, e) => {
+            alert('Terjadi kesalahan pada sistem. Harap coba lagi nanti.')
         }
     })
 }
@@ -681,12 +724,16 @@ const retrainModel = () => {
 
     $.ajax({
         'method': 'GET',
-        'url': 'https://zonalytics-flask.herokuapp.com/api/retrain-model',
+        'url': 'http://localhost:5000/api/retrain-model',
         'success': (data, status) => {
             console.log(`accuracy: ${data}`);
             // show flash message here
             $('#alert-success').show()
             $('#alert-retrain').hide()
+        },
+        'error': (xhr, status, e) => {
+            $('#alert-retrain').hide()
+            alert('Terjadi kesalahan pada sistem. Harap coba lagi nanti.')
         }
     })
 }

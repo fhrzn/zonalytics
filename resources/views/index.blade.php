@@ -119,7 +119,9 @@
                                 <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
                                     <img src="img/caret-right.svg">
                                 </a>
-                            </div>                              
+                            </div>
+                            <br>
+                            <p>Total Data : <span id="total-data">0</span></p>
                         </div>            
                     </div>
                     <div class="align-self-end">
@@ -138,7 +140,7 @@
                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
-                            </div>                            
+                            </div>
                         </div>                        
                         <div role="alert" aria-live="assertive" aria-atomic="true" class="toast" data-autohide="true" data-delay="3000">                            
                             <div class="toast-body bg-warning">
