@@ -318,6 +318,7 @@ const dataAll = () => {
         //   3: sentiment[2]
         // }      
         settingChart(sentiment)
+        $('#total-data').text(data.data.length)
     }).fail((xhr, e) => {
         alert('Sistem tidak merespon. Harap coba lagi nanti.')
     })
